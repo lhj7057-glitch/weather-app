@@ -1,0 +1,14 @@
+{
+  "name": "oneul-weather",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HTML, CSS, JavaScript와 Node.js로 만든 간단한 날씨 웹앱",
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
