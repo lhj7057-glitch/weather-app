@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="도시 이름으로 가볍게 확인하는 지금의 날씨. 기온, 체감 온도, 습도와 바람을 한눈에 확인하세요.">
+  <title>오늘 — 도시의 현재 날씨</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></symbol>
+      <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+      <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+      <symbol id="icon-thermometer" viewBox="0 0 24 24"><path d="M9 14.5V5a3 3 0 0 1 6 0v9.5a5 5 0 1 1-6 0Z"/><path d="M12 8v9"/><circle cx="12" cy="18" r="1"/></symbol>
+      <symbol id="icon-drop" viewBox="0 0 24 24"><path d="M12 3S5 11 5 15a7 7 0 0 0 14 0c0-4-7-12-7-12Z"/><path d="M8 15a4 4 0 0 0 4 4"/></symbol>
+      <symbol id="icon-wind" viewBox="0 0 24 24"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h5a3 3 0 1 1-3 3"/></symbol>
+      <symbol id="icon-rain" viewBox="0 0 24 24"><path d="M6 14a4 4 0 1 1 1-8 6 6 0 0 1 11-1 4.5 4.5 0 1 1 0 9H6Zm2 3-1 3m5-3-1 3m5-3-1 3"/></symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="오늘 날씨 홈">
+        <span class="brand-mark"><svg class="icon"><use href="#icon-sun"/></svg></span>
+        <span>오늘<span class="brand-dot">.</span></span>
+      </a>
+      <span class="header-note">일상에 필요한, 지금의 날씨</span>
+      <span class="header-tag"><span class="status-dot"></span> CURRENT WEATHER</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow"><span></span> A LITTLE LOOK AT THE SKY</p>
+        <h1 id="page-title">어디의 하늘이<br>궁금한가요<span class="title-dot">?</span></h1>
+        <p class="intro-copy">떠나기 전에도, 그냥 궁금할 때도.<br class="mobile-break"> 도시 이름 하나로 지금의 날씨를 만나보세요.</p>
+      </section>
+
+      <section class="search-panel" aria-label="도시 검색">
+        <form id="weather-form">
+          <label for="city-input">도시 이름</label>
+          <div class="search-row">
+            <div class="input-wrap">
+              <svg class="icon search-icon" aria-hidden="true"><use href="#icon-search"/></svg>
+              <input id="city-input" name="city" type="text" placeholder="서울, 부산, London…" minlength="2" maxlength="100" autocomplete="off" required aria-describedby="search-help">
+            </div>
+            <button id="search-button" class="search-button" type="submit">
+              <span id="button-text">날씨 확인</span>
+              <svg class="icon button-arrow" aria-hidden="true"><use href="#icon-arrow"/></svg>
+              <span class="spinner" aria-hidden="true" hidden></span>
+            </button>
+          </div>
+        </form>
+        <div class="search-extras">
+          <div class="quick-cities" aria-label="빠른 도시 검색">
+            <span>어디로 가볼까요?</span>
+            <button type="button" data-city="서울">서울</button>
+            <button type="button" data-city="부산">부산</button>
+            <button type="button" data-city="제주">제주</button>
+            <button type="button" data-city="Tokyo">도쿄</button>
+          </div>
+          <span id="search-help">한글·영문 검색 가능</span>
+        </div>
+      </section>
+
+      <p id="status-message" class="status-message" role="status" aria-live="polite" aria-atomic="true"></p>
+
+      <section id="weather-panel" class="weather-panel" data-weather="clear" data-day="true" aria-label="현재 날씨" aria-busy="false">
+        <div class="sky-card">
+          <div class="card-topline"><span>지금의 하늘</span><span class="card-number">01 / WEATHER</span></div>
+          <div id="empty-state" class="empty-state">
+            <span class="small-label">YOUR NEXT DESTINATION</span>
+            <h2>도시를 고르면,<br>날씨가 펼쳐집니다.</h2>
+            <p>위에서 도시를 검색해 주세요.</p>
+          </div>
+          <div id="weather-result" class="weather-result" hidden>
+            <p class="location-line"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg><span id="location-detail"></span></p>
+            <h2 id="city-name"></h2>
+            <div class="temperature"><span id="temperature"></span><span class="degree">°</span><span class="temperature-unit">C</span></div>
+            <p id="weather-description" class="weather-description"></p>
+          </div>
+          <div class="sky-art" aria-hidden="true">
+            <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+            <div class="sun-halo"></div><div class="sun"></div>
+            <div class="cloud cloud-back"></div><div class="cloud cloud-front"></div>
+            <div class="raindrops"><i></i><i></i><i></i><i></i></div>
+            <div class="snowflakes">✳ &nbsp; ✳ &nbsp; ✳</div>
+            <div class="lightning">ϟ</div>
+          </div>
+          <div class="sky-bottom"><span class="status-dot"></span><span id="updated-time">하늘의 작은 변화를, 한눈에.</span></div>
+        </div>
+
+        <div class="details-card">
+          <div class="details-heading"><h2>조금 더 자세히</h2><span>THE DETAILS</span></div>
+          <dl class="metrics">
+            <div class="metric"><dt><span class="metric-icon warm"><svg class="icon" aria-hidden="true"><use href="#icon-thermometer"/></svg></span>체감 온도</dt><dd><span id="feels-like">—</span><span class="metric-unit">°C</span></dd></div>
+            <div class="metric"><dt><span class="metric-icon cool"><svg class="icon" aria-hidden="true"><use href="#icon-drop"/></svg></span>습도</dt><dd><span id="humidity">—</span><span class="metric-unit">%</span></dd></div>
+            <div class="metric"><dt><span class="metric-icon mint"><svg class="icon" aria-hidden="true"><use href="#icon-wind"/></svg></span>풍속</dt><dd><span id="wind-speed">—</span><span class="metric-unit">m/s</span></dd></div>
+            <div class="metric"><dt><span class="metric-icon lavender"><svg class="icon" aria-hidden="true"><use href="#icon-rain"/></svg></span>강수량</dt><dd><span id="precipitation">—</span><span class="metric-unit">mm</span></dd></div>
+          </dl>
+          <p id="details-note" class="details-note"><svg class="icon" aria-hidden="true"><use href="#icon-clock"/></svg><span>검색한 도시의 현재 날씨가 표시됩니다.</span></p>
+        </div>
+      </section>
+      <noscript><p class="noscript-message">날씨를 검색하려면 브라우저의 JavaScript를 활성화해 주세요.</p></noscript>
+    </main>
+
+    <footer class="site-footer">
+      <span>하늘을 확인하고, 가볍게 하루를 시작하세요.</span>
+      <span>Weather by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo ↗</a><span class="footer-divider">/</span>Location by <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames ↗</a></span>
+    </footer>
+  </div>
+</body>
+</html>
